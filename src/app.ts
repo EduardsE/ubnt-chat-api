@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
 import Environment from '@env';
-
+import * as AuthController from '@controllers/AuthController';
 
 class App {
   public express: any;
@@ -25,12 +25,12 @@ class App {
   private mountRoutes(): void {
     const router = express.Router()
     this.express.use('/', router);
+    this.express.use('/login', AuthController.login);
   }
 
 
   private configureCors(): void {
     const corsOptions = {
-      credentials: true,
       origin: [
         Environment.uiUrl,
       ],

@@ -16,7 +16,8 @@
     "paths": {
       "@config/*": [ "./src/config/*" ],
       "@env": [ "./src/config/environment" ],
-      "@t/*": [ "./src/types/*" ]
+      "@controllers/*": [ "./src/controllers/*" ],
+      "@t/*": [ "./src/types/*" ],
     }
   },
   "include": [
