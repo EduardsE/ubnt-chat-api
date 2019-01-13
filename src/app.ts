@@ -6,7 +6,10 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
 import Environment from '@env';
-import * as AuthController from '@controllers/AuthController';
+import Websockets from "@config/websockets";
+
+import AuthRoutes from '@routes/Auth';
+import ChatRoutes from '@routes/Chat';
 
 class App {
   public express: any;
@@ -19,18 +22,21 @@ class App {
     this.configureExpressSession();
     this.configureMorgan();
     this.mountRoutes();
+    this.configureWebSockets();
   }
 
 
   private mountRoutes(): void {
     const router = express.Router()
     this.express.use('/', router);
-    this.express.use('/login', AuthController.login);
+    this.express.use('/auth', AuthRoutes);
+    this.express.use('/chat', ChatRoutes);
   }
 
 
   private configureCors(): void {
     const corsOptions = {
+      credentials: true,
       origin: [
         Environment.uiUrl,
       ],
@@ -44,7 +50,6 @@ class App {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(cookieParser());
-
 
     var RedisStore = require('connect-redis')(session);
 
@@ -63,6 +68,13 @@ class App {
 
   private configureMorgan() {
     this.express.use(morgan('tiny'));
+  }
+
+
+  private configureWebSockets() {
+    var server = require('http').createServer(this.express);
+    Websockets.initialize(server);
+    server.listen(3001);
   }
 }
 

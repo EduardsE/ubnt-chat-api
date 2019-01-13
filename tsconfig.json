@@ -15,8 +15,11 @@
     "baseUrl": "./",
     "paths": {
       "@config/*": [ "./src/config/*" ],
-      "@env": [ "./src/config/environment" ],
       "@controllers/*": [ "./src/controllers/*" ],
+      "@env": [ "./src/config/environment" ],
+      "@middleware/*": [ "./src/middleware/*" ],
+      "@routes/*": [ "./src/routes/*" ],
+      "@services/*": [ "./src/services/*" ],
       "@t/*": [ "./src/types/*" ],
     }
   },

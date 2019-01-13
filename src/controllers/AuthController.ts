@@ -1,28 +1,37 @@
 import { Request, Response } from 'express';
 
-import { ActiveUsersHelper } from "src/helpers/ActiveUsersHelper";
-import { User } from '@t/User';
+import * as ChatService from '@services/Chat.service';
 
 export async function login(req: Request, res: Response): Promise<any> {
   try {
-    let users = await ActiveUsersHelper.getActiveUsers() as User[];
-
     if (!req.body.username) {
       throw new Error("No username given");
     }
 
-    if (users[req.body.username]) {
+    let users = ChatService.getConnectedUsers();
+    const existingUser = users.find(user => user.username === req.body.username);
+    if (existingUser) {
       throw new Error("Username already taken");
     }
 
-    users.push({
+    const user = ChatService.addUser({
       username: req.body.username,
       connectedAt: new Date()
     });
 
-    // TODO: Send socket message about new user joinig;
+    req.session.user = user;
 
-    await ActiveUsersHelper.setActiveUsers(users);
+    // await ActiveUsersHelper.setActiveUsers(users);
+    return res.status(204).json();
+  } catch (error) {
+    return res.status(500).json(error.message);
+  }
+}
+
+
+export async function logout(req: Request, res: Response): Promise<any> {
+  try {
+    ChatService.removeUser(res.locals.user);
     return res.status(204).json();
   } catch (error) {
     return res.status(500).json(error.message);
