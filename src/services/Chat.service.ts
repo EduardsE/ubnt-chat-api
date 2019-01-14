@@ -3,7 +3,7 @@ import { User } from "@t/User";
 import SocketService from "./Socket.service";
 import moment from 'moment';
 
-let disconnectAfterSeconds = 120;
+let disconnectAfterSeconds = 10000000;
 let users: User[] = [];
 let messages: Message[] = [];
 
@@ -59,11 +59,8 @@ export function addMessage(message: Message): void {
 }
 
 
-export function getStatus(): object {
-  return {
-    messages,
-    users
-  }
+export function getUsers(): User[] {
+  return users;
 }
 
 

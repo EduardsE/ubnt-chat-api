@@ -4,8 +4,16 @@ import * as ChatService from '@services/Chat.service';
 
 export async function getStatus(req: Request, res: Response): Promise<any> {
   try {
-    const status = ChatService.getStatus();
-    return res.json(status);
+    // Removing sensitive data before returning.
+    const users = ChatService.getUsers().map(user => {
+      const { socketId, ...fitleredUser } = user;
+      return fitleredUser;
+    })
+
+    return res.json({
+      users,
+      self: res.locals.user
+    });
   } catch (error) {
     return res.status(500).json(error.message);
   }
