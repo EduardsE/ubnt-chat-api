@@ -10,18 +10,25 @@ export default class SocketService {
     this.socket = Websockets.getIo();
   }
 
-  public emitUserJoined(user: User) {
-    this.socket.emit('user-joined', user);
+  public emitUserConnected(user: User) {
+    this.socket.emit('user-connected', user);
   }
 
 
   public emitNewMessage(message: Message) {
-    console.log('emit new message');
     this.socket.emit('new-message', message);
   }
 
 
-  public emitUserDisconnected(user: User) {
-    this.socket.emit('user-disconnected', user);
+  public emitUserDisconnected(user: User, dueToInactivity: boolean = false) {
+    this.socket.emit('user-disconnected', {
+      ...user,
+      dueToInactivity
+    });
+  }
+
+
+  public disconnectUser(user: User) {
+    this.socket.sockets.connected[user.socketId].disconnect();
   }
 }

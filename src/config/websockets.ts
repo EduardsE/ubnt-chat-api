@@ -1,23 +1,23 @@
 import sio from 'socket.io';
+import * as ChatService from '@services/Chat.service';
 
+const sharedsession = require("express-socket.io-session");
 let io: sio.Server;
 
 export default class Websockets {
-  public static initialize(server) {
+  public static initialize(server, sessionData) {
     io = sio(server);
+    io.use(sharedsession(sessionData));
 
     io.on('connection', async (socket) => {
-      console.log('connected');
-      // io.emit('user-joined', "hello world");
-      // console.log(socket);
+      ChatService.addSocketIdToUser(
+        socket.handshake['session'].user,
+        socket.conn.id
+      );
+      socket.handshake['session']['socketId'] = socket.conn.id;
+      socket.handshake['session'].save();
 
-      socket.on('new-message', (data) => {
-        console.log(data);
-      });
-
-      socket.on('disconnect', async () => {
-
-      });
+      socket.on('disconnect', async () => {});
     });
   }
 

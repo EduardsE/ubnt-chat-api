@@ -15,8 +15,10 @@ export async function login(req: Request, res: Response): Promise<any> {
     }
 
     const user = ChatService.addUser({
-      username: req.body.username,
-      connectedAt: new Date()
+      username: req.body.username.trim(),
+      connectedAt: new Date(),
+      id: Math.random().toString(36).substring(3),
+      color: "#"+((1<<24)*Math.random()|0).toString(16)
     });
 
     req.session.user = user;

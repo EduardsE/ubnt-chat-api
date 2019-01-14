@@ -22,7 +22,6 @@ class App {
     this.configureExpressSession();
     this.configureMorgan();
     this.mountRoutes();
-    this.configureWebSockets();
   }
 
 
@@ -51,9 +50,9 @@ class App {
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(cookieParser());
 
-    var RedisStore = require('connect-redis')(session);
+    const RedisStore = require('connect-redis')(session);
 
-    this.express.use(session({
+    const sessionData = session({
       store: new RedisStore({
         host: Environment.redis.host,
         port: Environment.redis.port,
@@ -62,7 +61,10 @@ class App {
       resave: false,
       saveUninitialized: true,
       cookie: { secure: false }
-    }))
+    })
+
+    this.express.use(sessionData);
+    this.configureWebSockets(sessionData);
   }
 
 
@@ -71,9 +73,9 @@ class App {
   }
 
 
-  private configureWebSockets() {
+  private configureWebSockets(sessionData) {
     var server = require('http').createServer(this.express);
-    Websockets.initialize(server);
+    Websockets.initialize(server, sessionData);
     server.listen(3001);
   }
 }

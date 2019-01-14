@@ -21,7 +21,8 @@ export async function postMessage(req: Request, res: Response): Promise<any> {
     const message: Message = {
       username: res.locals.user.username,
       message: req.body.message,
-      id: Math.random().toString(36).substring(3)
+      id: Math.random().toString(36).substring(3),
+      color: res.locals.user.color
     }
 
     ChatService.addMessage(message);
