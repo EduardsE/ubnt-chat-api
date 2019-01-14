@@ -52,8 +52,6 @@ export function addMessage(message: Message): void {
     }
   })
 
-  console.log(users);
-
   new SocketService().emitNewMessage(message);
   return;
 }
