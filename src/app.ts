@@ -5,14 +5,15 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
+import { Logger } from './helpers/Logger';
+import AuthRoutes from '@routes/Auth';
+import ChatRoutes from '@routes/Chat';
 import Environment from '@env';
 import Websockets from "@config/websockets";
 
-import AuthRoutes from '@routes/Auth';
-import ChatRoutes from '@routes/Chat';
-
 class App {
   public express: any;
+  public sockets: any;
   public corsOptions: object;
 
 
@@ -50,13 +51,7 @@ class App {
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(cookieParser());
 
-    const RedisStore = require('connect-redis')(session);
-
     const sessionData = session({
-      store: new RedisStore({
-        host: Environment.redis.host,
-        port: Environment.redis.port,
-      }),
       secret: 'keyboard cat',
       resave: false,
       saveUninitialized: true,
@@ -74,10 +69,17 @@ class App {
 
 
   private configureWebSockets(sessionData) {
-    var server = require('http').createServer(this.express);
-    Websockets.initialize(server, sessionData);
-    server.listen(3001);
+    const socketPort = process.env.PORT || 3001
+    const socketServer = require('http').createServer(this.express);
+    Websockets.initialize(this.sockets, sessionData);
+    this.sockets = socketServer.listen(socketPort, (err: Error) => {
+      Logger.info('Started socket server');
+      if (err) {
+        Logger.info(`Couldn't start socket server`, err);
+        return console.log(err)
+      }
+    })
   }
 }
 
-export default new App().express;
+export default new App();
