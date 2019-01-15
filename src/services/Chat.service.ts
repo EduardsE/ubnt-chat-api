@@ -103,11 +103,11 @@ export function addSocketIdToUser(user: User, socketId: string): void {
 }
 
 
-export function removeUserBySocketId(socketId: string): void {
+export function removeUserOnSocketDisconnect(socketId: string): void {
   const storedUser = users.find(u => u.socketId === socketId);
 
   if (storedUser) {
-    this.removeUser(storedUser);
+    users = users.filter(u => u.username !== storedUser.username);
   }
 
   return;

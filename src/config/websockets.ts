@@ -6,12 +6,16 @@ let io: sio.Server;
 
 export default class Websockets {
   public static initialize(server, sessionData) {
-    io = sio(server);
+    io = sio(server, {
+      transports: ['websocket', 'polling'],
+      // origins: '*:*'
+    });
+
     io.use(sharedsession(sessionData));
 
     io.on('connection', async (socket) => {
       socket.on('disconnect', () => {
-        ChatService.removeUserBySocketId(socket.id);
+        ChatService.removeUserOnSocketDisconnect(socket.id);
       });
 
       try {

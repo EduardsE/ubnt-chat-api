@@ -4,7 +4,7 @@ import { Message } from "@t/Message";
 
 
 export default class SocketService {
-  private socket;
+  private socket: SocketIO.Server;
 
   constructor() {
     this.socket = Websockets.getIo();
