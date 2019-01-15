@@ -10,6 +10,10 @@ export default class Websockets {
     io.use(sharedsession(sessionData));
 
     io.on('connection', async (socket) => {
+      socket.on('disconnect', () => {
+        ChatService.removeUserBySocketId(socket.id);
+      });
+
       try {
         ChatService.addSocketIdToUser(
           socket.handshake['session'].user,

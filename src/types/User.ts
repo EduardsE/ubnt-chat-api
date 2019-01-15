@@ -1,7 +1,7 @@
 export interface User {
   username: string;
   connectedAt: Date;
-  socketId: string;
   color: string;
-  lastActivityAt: Date;
+  socketId?: string;
+  lastActivityAt?: Date;
 }

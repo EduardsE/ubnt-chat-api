@@ -6,9 +6,9 @@ import environment from "@config/environment";
 
 let disconnectAfterSeconds = environment.disconnectAfterSeconds;
 let users: User[] = [];
-let messages: Message[] = [];
 
-// Disconnects users after 10 seconds
+// Disconnects users after 'disconnectAfterSeconds' seconds
+// + what's left on the 10 second interval.
 (() => {
   setInterval(() => {
     users.map(user => {
@@ -22,7 +22,13 @@ let messages: Message[] = [];
   }, 10000)
 })()
 
-export function addUser(user): void {
+
+/**
+ * Adds user to stack and emits event to all sockets.
+ * @param User
+ * @returns User
+ */
+export function addUser(user: User): User {
   users.push({
     ...user,
     lastActivityAt: new Date(),
@@ -32,6 +38,11 @@ export function addUser(user): void {
 }
 
 
+/**
+ * Removes user from stack and emits event to all sockets.
+ * @param User
+ * @returns void
+ */
 export function removeUser(user): void {
   users = users.filter(u => u.username !== user.username);
   new SocketService().emitUserDisconnected(user);
@@ -39,14 +50,11 @@ export function removeUser(user): void {
 }
 
 
-export function getConnectedUsers(): User[] {
-  return users;
-}
-
-
+/**
+ * Updates senders last activities time and send message to all sockets.
+ * @returns Message[]
+ */
 export function addMessage(message: Message): void {
-  messages.push(message);
-
   users.map(user => {
     if (user.username === message.username) {
       user.lastActivityAt = new Date();
@@ -58,14 +66,24 @@ export function addMessage(message: Message): void {
 }
 
 
+/**
+ * Returns currently connected users
+ * @returns User[]
+ */
 export function getUsers(): User[] {
   return users;
 }
 
 
+/**
+ * Disconnects user and sends notif,
+ * @returns User[]
+ */
 export function disconnectDueToInactivity(user: User): void {
   const socketService = new SocketService();
   socketService.sendInactivityDisconnectNotif(user);
+  socketService.emitUserDisconnected(user, true);
+
   socketService.disconnectUser(user);
   users = users.filter(u => u.username !== user.username);
   return;
@@ -83,3 +101,17 @@ export function addSocketIdToUser(user: User, socketId: string): void {
 
   return;
 }
+
+
+export function removeUserBySocketId(socketId: string): void {
+  const storedUser = users.find(u => u.socketId === socketId);
+
+  if (storedUser) {
+    this.removeUser(storedUser);
+  }
+
+  return;
+}
+
+
+

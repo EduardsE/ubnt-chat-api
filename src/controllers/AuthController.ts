@@ -5,25 +5,28 @@ import * as ChatService from '@services/Chat.service';
 export async function login(req: Request, res: Response): Promise<any> {
   try {
     if (!req.body.username) {
-      throw new Error("No username given");
+      throw new Error("No Nickname given");
     }
 
-    let users = ChatService.getConnectedUsers();
+    let users = ChatService.getUsers();
     const existingUser = users.find(user => user.username === req.body.username);
     if (existingUser) {
       throw new Error("Failed to connect. Nickname already taken.',");
     }
 
+    if (req.body.username.length > 100) {
+      throw new Error(
+        `Please, choose a username that's shorter than 100 characters`
+      );
+    }
+
     const user = ChatService.addUser({
       username: req.body.username.trim(),
       connectedAt: new Date(),
-      id: Math.random().toString(36).substring(3),
       color: "#"+((1<<24)*Math.random()|0).toString(16)
     });
 
     req.session.user = user;
-
-    // await ActiveUsersHelper.setActiveUsers(users);
     return res.status(204).json();
   } catch (error) {
     return res.status(500).json(error.message);

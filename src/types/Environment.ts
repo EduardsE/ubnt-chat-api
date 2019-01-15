@@ -3,9 +3,4 @@ export interface EnvironmentType {
   uiUrl: string;
   disconnectAfterSeconds: number;
   socketPort: number,
-
-  redis: {
-    host: string;
-    port: number;
-  },
 }

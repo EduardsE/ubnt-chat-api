@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { Message } from '@t/Message';
 import * as ChatService from '@services/Chat.service';
 
+
 export async function getStatus(req: Request, res: Response): Promise<any> {
   try {
     // Removing sensitive data before returning.
