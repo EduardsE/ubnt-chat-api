@@ -1,5 +1,8 @@
 import { NextFunction, Response, Request } from 'express';
 
+/**
+ * Check if user has authed
+ */
 export const isAuthenticated = async (
   req: Request, res: Response, next: NextFunction
 ): Promise<Response|void> => {

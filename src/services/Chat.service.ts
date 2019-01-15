@@ -25,7 +25,7 @@ let users: User[] = [];
 
 /**
  * Adds user to stack and emits event to all sockets.
- * @param User
+ * @param user
  * @returns User
  */
 export function addUser(user: User): User {
@@ -40,7 +40,7 @@ export function addUser(user: User): User {
 
 /**
  * Removes user from stack and emits event to all sockets.
- * @param User
+ * @param user
  * @returns void
  */
 export function removeUser(user): void {
@@ -76,8 +76,8 @@ export function getUsers(): User[] {
 
 
 /**
- * Disconnects user and sends notif,
- * @returns User[]
+ * Disconnects user and sends notif to other users.
+ * @returns void
  */
 export function disconnectDueToInactivity(user: User): void {
   const socketService = new SocketService();
@@ -90,6 +90,11 @@ export function disconnectDueToInactivity(user: User): void {
 }
 
 
+/**
+ * Adds socket to authenticated user or rejects, if chat accessed
+ * without auth process
+ * @returns void
+ */
 export function addSocketIdToUser(user: User, socketId: string): void {
   const storedUser = users.find(u => user.username === u.username);
 
@@ -103,6 +108,10 @@ export function addSocketIdToUser(user: User, socketId: string): void {
 }
 
 
+/**
+ * Removes user when tabs/window gets closed.
+ * @returns void
+ */
 export function removeUserOnSocketDisconnect(socketId: string): void {
   const storedUser = users.find(u => u.socketId === socketId);
 

@@ -1,5 +1,6 @@
 import sio from 'socket.io';
 import * as ChatService from '@services/Chat.service';
+import { Logger } from 'src/helpers/Logger';
 
 const sharedsession = require("express-socket.io-session");
 let io: sio.Server;
@@ -8,7 +9,6 @@ export default class Websockets {
   public static initialize(server, sessionData) {
     io = sio(server, {
       transports: ['websocket', 'polling'],
-      // origins: '*:*'
     });
 
     io.use(sharedsession(sessionData));
@@ -24,6 +24,7 @@ export default class Websockets {
           socket.conn.id
         );
       } catch(error) {
+        Logger.error(`Someone's trying to access without auth`, error);
         socket.emit('accessing-without-auth');
         socket.disconnect();
       }
