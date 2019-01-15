@@ -33,7 +33,11 @@ export async function login(req: Request, res: Response): Promise<any> {
 
 export async function logout(req: Request, res: Response): Promise<any> {
   try {
-    ChatService.removeUser(res.locals.user);
+    const user = {
+      ...res.locals.user,
+      id: Math.random().toString(36).substring(3)
+    }
+    ChatService.removeUser(user);
     return res.status(204).json();
   } catch (error) {
     return res.status(500).json(error.message);
