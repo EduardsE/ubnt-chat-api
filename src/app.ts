@@ -10,6 +10,7 @@ import AuthRoutes from '@routes/Auth';
 import ChatRoutes from '@routes/Chat';
 import Environment from '@env';
 import Websockets from "@config/websockets";
+import environment from '@env';
 
 class App {
   public express: any;
@@ -69,15 +70,15 @@ class App {
 
 
   private configureWebSockets(sessionData) {
-    const socketPort = process.env.PORT || 3001
     const socketServer = require('http').createServer(this.express);
-    Websockets.initialize(this.sockets, sessionData);
-    this.sockets = socketServer.listen(socketPort, (err: Error) => {
-      Logger.info('Started socket server');
+    Websockets.initialize(socketServer, sessionData);
+
+    this.sockets = socketServer.listen(environment.socketPort, (err: Error) => {
       if (err) {
         Logger.info(`Couldn't start socket server`, err);
-        return console.log(err)
       }
+
+      Logger.info('Started socket server');
     })
   }
 }
