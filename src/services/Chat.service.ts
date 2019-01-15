@@ -2,8 +2,9 @@ import { Message } from "@t/Message";
 import { User } from "@t/User";
 import SocketService from "./Socket.service";
 import moment from 'moment';
+import environment from "@config/environment";
 
-let disconnectAfterSeconds = 10000000;
+let disconnectAfterSeconds = environment.disconnectAfterSeconds;
 let users: User[] = [];
 let messages: Message[] = [];
 
@@ -64,9 +65,8 @@ export function getUsers(): User[] {
 
 export function disconnectDueToInactivity(user: User): void {
   const socketService = new SocketService();
-  socketService.emitUserDisconnected(user, true);
+  socketService.sendInactivityDisconnectNotif(user);
   socketService.disconnectUser(user);
-
   users = users.filter(u => u.username !== user.username);
   return;
 }
@@ -77,6 +77,8 @@ export function addSocketIdToUser(user: User, socketId: string): void {
 
   if (storedUser) {
     storedUser.socketId = socketId;
+  } else {
+    throw new Error(`Access denied without authenticating`);
   }
 
   return;

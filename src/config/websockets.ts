@@ -10,14 +10,18 @@ export default class Websockets {
     io.use(sharedsession(sessionData));
 
     io.on('connection', async (socket) => {
-      ChatService.addSocketIdToUser(
-        socket.handshake['session'].user,
-        socket.conn.id
-      );
+      try {
+        ChatService.addSocketIdToUser(
+          socket.handshake['session'].user,
+          socket.conn.id
+        );
+      } catch(error) {
+        socket.emit('accessing-without-auth');
+        socket.disconnect();
+      }
+
       socket.handshake['session']['socketId'] = socket.conn.id;
       socket.handshake['session'].save();
-
-      socket.on('disconnect', async () => {});
     });
   }
 

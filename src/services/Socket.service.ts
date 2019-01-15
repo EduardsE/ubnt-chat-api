@@ -31,4 +31,11 @@ export default class SocketService {
   public disconnectUser(user: User) {
     this.socket.sockets.connected[user.socketId].disconnect();
   }
+
+
+  public sendInactivityDisconnectNotif(user: User) {
+    this.socket.sockets.connected[user.socketId].emit(
+      'disconnect-due-to-inactivity'
+    );
+  }
 }
