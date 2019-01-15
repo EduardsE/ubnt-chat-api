@@ -11,7 +11,7 @@ export async function login(req: Request, res: Response): Promise<any> {
     let users = ChatService.getUsers();
     const existingUser = users.find(user => user.username === req.body.username);
     if (existingUser) {
-      throw new Error("Failed to connect. Nickname already taken.',");
+      throw new Error("Failed to connect. Nickname already taken.");
     }
 
     if (req.body.username.length > 100) {

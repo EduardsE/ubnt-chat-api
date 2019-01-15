@@ -13,8 +13,8 @@ import Websockets from "@config/websockets";
 import environment from '@env';
 
 class App {
-  public express: any;
-  public sockets: any;
+  public express;
+  public sockets;
   public corsOptions: object;
 
 
