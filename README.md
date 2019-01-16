@@ -1,5 +1,8 @@
 UBNT Chat - API
 
+Install dependencies:
+##### `npm install` 
+
 Start the server locally with:
 ##### `pm2 start ecosystem.config.js --no-daemon` 
 
