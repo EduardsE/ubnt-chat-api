@@ -5,4 +5,4 @@ Start the server locally with:
 
 Inactiviy disconnect period can be changed in environment variables
 ##### `disconnectAfterSeconds: 120` 
-By default it' 2 minutes.s
+By default it's 2 minutess
