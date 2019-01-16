@@ -80,12 +80,17 @@ export function getUsers(): User[] {
  * @returns void
  */
 export function disconnectDueToInactivity(user: User): void {
+  const storedUser = users.find(u => u.username === user.username);
+
+  // At this point we save the info of the users coming disconnect,
+  // so we can act accordingly when getting the socket.disconnect
+  // event on server side.
+  storedUser.disconnectDueToInactivity = true;
+
   const socketService = new SocketService();
   socketService.sendInactivityDisconnectNotif(user);
   socketService.emitUserDisconnected(user, true);
-
   socketService.disconnectUser(user);
-  users = users.filter(u => u.username !== user.username);
   return;
 }
 
@@ -116,6 +121,11 @@ export function removeUserOnSocketDisconnect(socketId: string): void {
   const storedUser = users.find(u => u.socketId === socketId);
 
   if (storedUser) {
+    // If user was disconnected due to inactivity, other users
+    // already got the message
+    if (!storedUser.disconnectDueToInactivity) {
+      new SocketService().emitUserDisconnected(storedUser, false);
+    }
     users = users.filter(u => u.username !== storedUser.username);
   }
 

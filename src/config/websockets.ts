@@ -24,7 +24,7 @@ export default class Websockets {
           socket.conn.id
         );
       } catch(error) {
-        Logger.error(`Someone's trying to access without auth`, error);
+        Logger.error(error.message);
         socket.emit('accessing-without-auth');
         socket.disconnect();
       }

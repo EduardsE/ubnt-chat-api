@@ -4,4 +4,5 @@ export interface User {
   color: string;
   socketId?: string;
   lastActivityAt?: Date;
+  disconnectDueToInactivity?: boolean;
 }
